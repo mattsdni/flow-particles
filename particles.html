@@ -8,7 +8,7 @@
 
         body {
             margin: 0;
-            background: #fff;
+            background: #000;
             font-family: "Open Sans";
         }
 
@@ -401,6 +401,7 @@ thing("Yo.");
                         ctx.beginPath(); //Begin a new path on the canvas
                         ctx.moveTo(p.x, p.y); //Move the drawing cursor to the starting point
                         ctx.lineTo(p.px, p.py); //Describe a line from the particle's old coordinates to the new ones
+                        ctx.lineWidth = 2;
                         ctx.stroke(); //Draw the path to the canvas
                     }
                     // else {
@@ -480,7 +481,7 @@ thing("Yo.");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             //This sets the color to draw with.
-            ctx.strokeStyle = "#005dff";
+            ctx.strokeStyle = "#87cfff";
 
             //This calls the function to update the particle positions.
             update_particle();
