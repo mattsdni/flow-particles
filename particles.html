@@ -28,9 +28,11 @@
             border: 2px solid white;
         }
     </style>
+    <script type="text/javascript" src="vel_dump3.js"></script>
 </head>
 <body>
 <h1>Click and drag!</h1>
+<button onclick="dumpCellData()">Dump Cell Data</button>
 <canvas id="c"></canvas>
 <script>
     /*
@@ -116,6 +118,7 @@ thing("Yo.");
         var speck_count = 5000; //This determines how many particles will be made.
 
         var vec_cells = []; //The array that will contain the grid cells
+
         var particles = []; //The array that will contain the particles
 
 
@@ -163,10 +166,11 @@ thing("Yo.");
                     width and height of "column 1, row 1" are counted in so that the top-left
                     corner of the new grid cell is at the bottom right of the other cell.
                     */
-                    var cell_data = new cell(col * resolution, row * resolution, resolution);
+                    //var cell_data = new cell(col * resolution, row * resolution, resolution);
 
                     //This pushes the cell object into the grid array.
-                    vec_cells[col][row] = cell_data;
+                    vec_cells[col][row] = vel_data_dump[col][row];//cell_data;
+                    vec_cells[col][row].pressure = 0;
 
                     /*
                     These two lines set the object's column and row values so the object knows
@@ -271,6 +275,52 @@ thing("Yo.");
 
         }
 
+        w.dumpCellData = () => {
+            let dataDumpObj = [];
+            for (let i = 0; i < 100; i++) {
+                let row = [];
+                for (let j = 0; j < 100; j++) {
+                    let dumpCell = {};
+                    dumpCell.x = vec_cells[i][j].x;
+                    dumpCell.y = vec_cells[i][j].y;
+                    dumpCell.r = vec_cells[i][j].r;
+                    dumpCell.col = vec_cells[i][j].col;
+                    dumpCell.row = vec_cells[i][j].row;
+                    dumpCell.xv = vec_cells[i][j].xv;
+                    dumpCell.yv = vec_cells[i][j].yv;
+                    dumpCell.pressure = vec_cells[i][j].pressure;
+                    row.push(dumpCell);
+                }
+                dataDumpObj.push(row);
+            }
+            console.log(JSON.stringify(dataDumpObj));
+        };
+
+
+        // function generateCellData() {
+        //     let cell_data = [];
+        //
+        //     for (let i = 0; i < 100; i++) {
+        //         let cell_row = [];
+        //         for (let j = 0; j < 100; j++) {
+        //             let cell = new Cell()
+        //             cell_row.push(new Cell())
+        //         }
+        //     }
+        //
+        //     make a 100x100 array with cells and assign to vec_cells
+        //
+        //
+        //     x: 0
+        //     y: 490
+        //     r: 10
+        //     col: 0
+        //     row: 49
+        //     xv: -0.9936859181662386
+        //     yv: 0.6831191730052496
+        //     pressure: 0.0017287997228191826
+        //
+        // }
 
         /*
         This function updates the position of the particles according to the velocity
@@ -556,13 +606,13 @@ thing("Yo.");
             This slowly decreases the cell's velocity over time so that the fluid stops
             if it's left alone.
             */
-            cell_data.xv *= 0.99;
-            cell_data.yv *= 0.99;
+            // cell_data.xv *= 0.99;
+            // cell_data.yv *= 0.99;
         }
 
 
         //This function is used to create a cell object.
-        function cell(x, y, res) {
+        function Cell(x, y, res) {
 
             //This stores the position to place the cell on the canvas
             this.x = x;
