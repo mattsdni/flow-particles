@@ -3,7 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Particle Stats</title>
-    <script type="text/javascript" src="vel_dump.js"></script>
+    <script type="text/javascript" src="vel_dump4.js"></script>
+    <style>
+        .arrow {
+            height: 10px;
+            position: relative;
+            width: 2px;
+            background: black;
+            margin: 20px;
+            display: inline-block;
+        }
+        .arrow:before {
+            content: " ";
+            width: 2px;
+            background: black;
+            height: 7px;
+            position: absolute;
+            top: -2px;
+            transform: rotate(50deg);
+            left: -2px;
+        }
+        .arrow:after {
+            content: " ";
+            width: 2px;
+            background: black;
+            height: 7px;
+            position: absolute;
+            top: -2px;
+            transform: rotate(-50deg);
+            right: -2px;
+        }
+    </style>
 </head>
 <body>
 <h1>Particle Stats Tools</h1>
@@ -11,18 +41,55 @@
 <p>A collection of tools to assist in the debugging and developement of particle flows.</p>
 
 <h3>Cell Statistics</h3>
-<span>average pressure: </span><span id="avg-pressure">0.6</span>
+<span>average pressure: </span><span id="avg-pressure">0</span><br>
+<span>max X velocity: </span><span id="max-x-vel">0</span><br>
+<span>max Y velocity: </span><span id="max-y-vel">0</span><br>
+<span>rows: </span><span id="">0</span><br>
+<span>cols: </span><span id="">0</span><br>
+
+<h3>Angle Viz</h3>
+<table id="angle-viz-table"></table>
 
 <script>
     let avgPressure = 0;
     let sumPressure = 0;
+    let maxXvel = 0;
+    let maxYvel = 0;
     for (let i = 0; i < vel_data_dump.length; i++) {
         for (let j = 0; j < vel_data_dump[0].length; j++) {
             sumPressure += vel_data_dump[i][j].pressure;
+            if (maxXvel < vel_data_dump[i][j].xv) {
+                maxXvel = vel_data_dump[i][j].xv;
+            }
+            if (maxYvel < vel_data_dump[i][j].yv) {
+                maxYvel = vel_data_dump[i][j].yv;
+            }
         }
     }
     avgPressure = sumPressure / (vel_data_dump.length * vel_data_dump[0].length);
     document.getElementById('avg-pressure').innerText = avgPressure;
+    document.getElementById('max-x-vel').innerText = maxXvel;
+    document.getElementById('max-y-vel').innerText = maxYvel;
+
+    let angle_grid = vel_data_dump;
+    let angle_grid_table = document.getElementById('angle-viz-table');
+    for (let i = 0; i < vel_data_dump.length; i++) {
+        let table_row = document.createElement("TR");
+        for (let j = 0; j < vel_data_dump[0].length; j++) {
+            let angle = Math.atan2(vel_data_dump[i][j].xv, vel_data_dump[i][j].yv) * (180/Math.PI);
+            if (angle < 0) {
+                angle += 360;
+            }
+            angle_grid[i][j].angle = angle;
+            let table_data = document.createElement("TD");
+            //table_data.innerText = Math.round(angle);
+            table_data.classList.add("arrow");
+            table_data.style = "transform: rotate(" + angle + "deg);";
+            table_row.appendChild(table_data)
+        }
+        angle_grid_table.appendChild(table_row);
+    }
+
 </script>
 </body>
 </html>
